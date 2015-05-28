@@ -22,6 +22,9 @@ angular.module('myApp.view2', ['ngRoute'])
 .controller('View2Ctrl', function($scope,View2processing) {
 
 	$scope.processedTranscations = View2processing.all();
+	 $scope.percentage = function(name) {
+        return 5;
+    };
 
 })
 .factory('View2processing',function(){
@@ -49,17 +52,22 @@ angular.module('myApp.view2', ['ngRoute'])
 			
 			
 			var ProcessedStock =[];
-
+             var stockTotal=0;
 			for(var l in names){
+				var stockHolderTotal=0;
 				//sort transactions according to holder
 				var sortedtransactions = [];
 				var transactionTotal={};
+				
 			for (var k = 0; k < transactions.length; k++) {
 		        if (transactions[k].name == names[l]) {
 		        	sortedtransactions.push(transactions[k]);
 		        }
 		      }
 			console.log("sortedtransactions: "+JSON.stringify(sortedtransactions));
+			for(var m=0; m<sortedtransactions.length; m++){
+				stockHolderTotal+=sortedtransactions[m].value;
+			}
 			for (var i in stock ){
 				var total=0;
 				
@@ -67,21 +75,33 @@ angular.module('myApp.view2', ['ngRoute'])
 					if(sortedtransactions[j].security==stock[i]){
 						total += sortedtransactions[j].value;
 					
-					
 					}
 					transactionTotal["name"]=names[l];
 					transactionTotal[stock[i].replace(/ /g,'')]=total;
                     //store total value for each stock type
 					
-        
+                    
 					
 				}
 				
 				console.log("transactionTotal: "+JSON.stringify(transactionTotal));
+				
 			
 			}
-			
+			transactionTotal["stockHolderTotal"] = stockHolderTotal;
+			console.log("stockHolderTotal is " + stockHolderTotal);
 			ProcessedStock.push(transactionTotal);
+			}
+			for(var n=0; n<ProcessedStock.length; n++){
+				stockTotal+=ProcessedStock[n].stockHolderTotal;
+			}
+			console.log("stockTotal is " + stockTotal);
+			for(var n=0; n<ProcessedStock.length; n++){
+				var percent = ((ProcessedStock[n].stockHolderTotal)/stockTotal)*100;
+				console.log("percent is " + percent);
+				ProcessedStock[n].percent = percent;
+				var displayPercent = Math.round(percent);
+				ProcessedStock[n].displayPercent = displayPercent+"%";
 			}
 			console.log("All stocks"+JSON.stringify(ProcessedStock));
 			return ProcessedStock;
