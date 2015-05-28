@@ -1,2 +1,17 @@
 <p>This is the partial for view 2.</p>
-<p>{{transactions}}<p>
+<table>
+<tr>
+      <th>Shareholder</th>
+	  <th>Preferred Stock</th>
+	  <th>Common Stock</th>
+	  <th>Options</th>
+    </tr>
+  <tr ng-repeat="transaction in processedTranscations">
+    <td>{{transaction.name}}</td>
+	<td>{{transaction.PreferredStock}}</td>
+	<td>{{transaction.CommonStock}}</td>
+	<td>{{transaction.Options}}</td>
+	
+  </tr>
+</table>
+

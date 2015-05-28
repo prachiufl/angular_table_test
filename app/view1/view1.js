@@ -36,4 +36,6 @@ angular.module('myApp.view1', ['ngRoute'])
 	{ security: 'Preferred Stock',  name: 'Robert',    value: 5,   date: '2014-1-14' },
 	{ security: 'Options',          name: 'Robert',    value: 15,  date: '2014-1-17' }
     ]
-}]);
+}])
+
+
