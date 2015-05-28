@@ -22,8 +22,12 @@ angular.module('myApp.view2', ['ngRoute'])
 .controller('View2Ctrl', function($scope,View2processing) {
 
 	$scope.processedTranscations = View2processing.all();
-	 $scope.percentage = function(name) {
-        return 5;
+	$scope.percentage = function(name) {
+		for(var s in $scope.processedTranscations){
+			if($scope.processedTranscations[s].name ==name)
+				return $scope.processedTranscations[s].percent;
+		}
+        return 0;
     };
 
 })
@@ -64,7 +68,7 @@ angular.module('myApp.view2', ['ngRoute'])
 		        	sortedtransactions.push(transactions[k]);
 		        }
 		      }
-			console.log("sortedtransactions: "+JSON.stringify(sortedtransactions));
+			//console.log("sortedtransactions: "+JSON.stringify(sortedtransactions));
 			for(var m=0; m<sortedtransactions.length; m++){
 				stockHolderTotal+=sortedtransactions[m].value;
 			}
@@ -84,26 +88,46 @@ angular.module('myApp.view2', ['ngRoute'])
 					
 				}
 				
-				console.log("transactionTotal: "+JSON.stringify(transactionTotal));
+				//console.log("transactionTotal: "+JSON.stringify(transactionTotal));
 				
 			
 			}
 			transactionTotal["stockHolderTotal"] = stockHolderTotal;
-			console.log("stockHolderTotal is " + stockHolderTotal);
+			//console.log("stockHolderTotal is " + stockHolderTotal);
 			ProcessedStock.push(transactionTotal);
 			}
 			for(var n=0; n<ProcessedStock.length; n++){
 				stockTotal+=ProcessedStock[n].stockHolderTotal;
 			}
-			console.log("stockTotal is " + stockTotal);
+			//console.log("stockTotal is " + stockTotal);
+			//get Total value for each type of Stock
+			var preferedTotal=0;
+			var commonTotal=0;
+			var optionsTotal=0;
+			var percentTotal =0;
 			for(var n=0; n<ProcessedStock.length; n++){
+				//Calculate percentage
 				var percent = ((ProcessedStock[n].stockHolderTotal)/stockTotal)*100;
-				console.log("percent is " + percent);
+				//console.log("percent is " + percent);
 				ProcessedStock[n].percent = percent;
 				var displayPercent = Math.round(percent);
 				ProcessedStock[n].displayPercent = displayPercent+"%";
+				
+				//Add total of each type of stock
+				preferedTotal+=ProcessedStock[n].PreferredStock;
+				commonTotal+=ProcessedStock[n].CommonStock;
+				optionsTotal+=ProcessedStock[n].Options;
+				percentTotal+=Math.round(percent);
 			}
-			console.log("All stocks"+JSON.stringify(ProcessedStock));
+			var totalVal = {};
+			totalVal["name"]="Total";
+			totalVal["PreferredStock"]=preferedTotal;
+			totalVal["CommonStock"]=commonTotal;
+			totalVal["Options"]=optionsTotal;
+			totalVal["percent"] = percentTotal;
+			totalVal["displayPercent"]=percentTotal +"%";
+			ProcessedStock.push(totalVal);
+			//console.log("All stocks"+JSON.stringify(ProcessedStock));
 			return ProcessedStock;
 		}  
 		  
@@ -111,22 +135,4 @@ angular.module('myApp.view2', ['ngRoute'])
 	
 });
 
-/*.controller('View2Ctrl', ['$scope', function($scope) {
-    $scope.transactions = [
-	{ security: 'Preferred Stock',  name: 'Robert',    value: 5,   date: '2014-1-3' },
-	{ security: 'Preferred Stock',  name: 'Robert',    value: 5,   date: '2014-1-5' },
-	{ security: 'Common Stock',     name: 'Bert',      value: 20,  date: '2014-1-6' },
-	{ security: 'Preferred Stock',  name: 'Elizabeth', value: 10,  date: '2014-1-6' },
-	{ security: 'Common Stock',     name: 'Robert',    value: 20,  date: '2014-1-9' },
-	{ security: 'Preferred Stock',  name: 'Bert',      value: 20,  date: '2014-1-11' },
-	{ security: 'Preferred Stock',  name: 'Robert',    value: 5,   date: '2014-1-12' },
-	{ security: 'Preferred Stock',  name: 'Robert',    value: 15,  date: '2014-1-12' },
-	{ security: 'Options',          name: 'Bert',      value: 10,  date: '2014-1-13' },
-	{ security: 'Preferred Stock',  name: 'Robert',    value: 5,   date: '2014-1-14' },
-	{ security: 'Options',          name: 'Robert',    value: 15,  date: '2014-1-17' }
-    ];
 
-    $scope.percentage = function(name) {
-        return 5;
-    };
-}]);*/
